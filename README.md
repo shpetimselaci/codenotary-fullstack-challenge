@@ -15,7 +15,7 @@ This is a simple application challenge made by Codenotary for their fullstack en
 
 ## Tech stack
 
-- React.js for the frontend
-- Node.js with Hono on the backend
+- React.js for the frontend & TRPC
+- Node.js with TRPC
 - ImmuDB for the database
 - Docker & docker compose to run everything via one command
