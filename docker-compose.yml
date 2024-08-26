@@ -1,0 +1,35 @@
+services:
+  db:
+    container_name: immudb
+    image: codenotary/immudb:latest
+    networks:
+      - vpn
+    ports:
+      - 3322:3322
+      - 9497:9497
+  backend:
+    image: node:22-alpine
+    networks:
+      - vpn
+      - host
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+  client:
+    image: node:22-alpine
+    networks:
+      - vpn
+      - host
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+
+networks:
+  vpn:
+    name: vpn
+    driver: bridge
+  host:
+    name: host
+    driver: host
