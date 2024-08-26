@@ -1,5 +1,5 @@
 import { Procedure, Router } from 'trpc';
-import { listInboundSchema, listOutboundSchema } from './validation';
+import { accountSchema, listInboundSchema, listOutboundSchema } from './validation';
 
 export const accountRouter = (router: Router, procedure: Procedure) =>
   router({
@@ -9,5 +9,5 @@ export const accountRouter = (router: Router, procedure: Procedure) =>
       .query(async () => {
         return [];
       }),
-    add: procedure.mutation(async () => {}),
+    add: procedure.input(accountSchema).mutation(async () => {}),
   });

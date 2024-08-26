@@ -6,16 +6,16 @@ const iban = new RegExp(
   'gm',
 );
 
-export const listOutboundSchema = z
-  .object({
-    account_number: z.string().ulid(),
-    account_name: z.string().min(1),
-    iban: z.string({ message: 'Iban is invalid! ' }).regex(iban),
-    address: z.string().min(3),
-    amount: z.number(),
-    type: z.enum(['sending', 'receiving']),
-  })
-  .array();
+export const accountSchema = z.object({
+  account_number: z.string().ulid().describe('Account number - must be an string, validated as ULID'),
+  account_name: z.string().min(1).describe('Account name - must be a string'),
+  iban: z.string({ message: 'IBAN is invalid!' }).regex(iban).describe('IBAN - must be a valid IBAN string'),
+  address: z.string().min(3).describe('Address - type string'),
+  amount: z.number().describe('Amount - type number'),
+  type: z.enum(['sending', 'receiving']).describe('Type - enum (sending, receiving)'),
+});
+
+export const listOutboundSchema = accountSchema.array();
 
 export const listInboundSchema = z.object({
   limit: z.number().min(5).max(100),
