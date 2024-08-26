@@ -19,7 +19,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./server/src:/home/src
+      - ./server/src:/home/server/src
       - ./server/package.json:/home/server/package.json
       - ./server/pnpm-lock.yaml:/home/server/pnpm-lock.yaml
       - ./server/vitest.config.ts:/home/server/vitest.config.ts
