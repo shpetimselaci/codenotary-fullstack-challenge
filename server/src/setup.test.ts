@@ -12,11 +12,12 @@ async function startServer() {
     server: http.Server;
     port: number;
   }>(async (resolve) => {
-    const server = await _startServer(42);
+    const port = Math.round(Math.random() * 1000);
+    const server = await _startServer(port);
 
     resolve({
       server,
-      port: 42,
+      port,
     });
   });
 
@@ -43,17 +44,16 @@ async function startServer() {
   };
 }
 
-let t: Awaited<ReturnType<typeof startServer>>;
+export let t: Awaited<ReturnType<typeof startServer>>;
 beforeAll(async () => {
   t = await startServer();
 });
 afterAll(async () => {
-  console.log('stopping');
   await t.close();
 });
 
 test('simple query', async () => {
-  const res = await t.client.account.list.query();
+  const res = await t.client.account.list.query({ limit: 10 });
   expect(res).toMatchInlineSnapshot(`
       []
     `);
