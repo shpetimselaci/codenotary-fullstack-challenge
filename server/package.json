@@ -6,14 +6,16 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
+    "build": "rm -rf build && tsc -p tsconfig.json",
     "format:write": "prettier --config .prettierrc --write .",
     "lint:write": "eslint --fix .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "keywords": [],
   "author": "Shpetim Selaci",
   "license": "MIT",
   "devDependencies": {
+    "@trpc/client": "^10.45.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@typescript-eslint/eslint-plugin": "^8.2.0",
@@ -35,7 +37,9 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "immudb-node": "^1.1.1",
+    "node-fetch": "^3.3.2",
     "superjson": "^2.2.1",
     "zod": "^3.23.8"
-  }
+  },
+  "packageManager": "pnpm@9.8.0"
 }

@@ -8,26 +8,29 @@ services:
       - 3322:3322
       - 9497:9497
   backend:
-    image: node:22-alpine
+    container_name: trpc
+    build:
+      context: ./server
+      dockerfile: Dockerfile
     networks:
       - vpn
-      - host
     ports:
-      - 8080:8080
+      - 7070:7070
     depends_on:
       - db
-    environment:
-      - IMMU_HOST=vpn
-      - IMMU_PORT=vpn
-      - IMMU_USER=immudb
-      - IMMU_PASSWORD=immudb # might not wanna do this outside development
-      - IMMU_DB=defaultdb
-      - PORT=8080
+    volumes:
+      - ./server/src:/home/src
+      - ./server/package.json:/home/server/package.json
+      - ./server/pnpm-lock.yaml:/home/server/pnpm-lock.yaml
+      - ./server/vitest.config.ts:/home/server/vitest.config.ts
+      - ./server/tsconfig.json:/home/server/tsconfig.ts
+      - ./server/.prettierrc:/home/server/.prettierrc
+      - ./server/.eslintrc.cjs:/home/server/.eslintrc.cjs
+    env_file:
+      - .env
   client:
+    container_name: trpc-fe
     image: node:22-alpine
-    networks:
-      - vpn
-      - host
     ports:
       - 3000:3000
     depends_on:
@@ -37,6 +40,3 @@ networks:
   vpn:
     name: vpn
     driver: bridge
-  host:
-    name: host
-    driver: host
