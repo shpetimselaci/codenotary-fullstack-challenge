@@ -33,6 +33,7 @@
     "@trpc/server": "^10.45.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "immudb-node": "^1.1.1",
     "superjson": "^2.2.1",
     "zod": "^3.23.8"
   }

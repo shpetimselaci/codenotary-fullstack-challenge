@@ -9,13 +9,14 @@ This is a simple application challenge made by Codenotary for their fullstack en
 - Application has a frontend that displays accounting information and allows to create new records.
 
 #### The solution should:
+
 - Have a readme
 - Have a documented API
 - Have docker-compose so it is easy to run.
 
 ## Tech stack
 
-- React.js for the frontend & TRPC
-- Node.js with TRPC
+- React.js for the frontend with TanStack & TRPC
+- Node.js with TRPC & Express
 - ImmuDB for the database
 - Docker & docker compose to run everything via one command
