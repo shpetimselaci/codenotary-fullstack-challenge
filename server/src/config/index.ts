@@ -8,6 +8,7 @@ export const environmentVariablesSchema = z.object({
   IMMUDB_DB: z.string(),
   NODE_ENV: z.string(),
   PORT: z.coerce.number(),
+  MODE: z.string().optional(),
 });
 
 export type EnvSchema = z.infer<typeof environmentVariablesSchema>;

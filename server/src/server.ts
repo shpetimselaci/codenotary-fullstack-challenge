@@ -4,6 +4,8 @@ import express from 'express';
 import { appRouter } from './trpc';
 import { loginToImmuDB, logoutImmuDB } from '~/sdk/immudb';
 import { createContext } from './context';
+import { renderTrpcPanel } from 'trpc-panel';
+import { config } from './config';
 
 const app = express();
 
@@ -17,11 +19,16 @@ app.use(
   }),
 );
 
-app.use('/', (_req, res) => {
+app.use('/health', (_req, res) => {
   return res.type('application/json').status(200).json('ok');
 });
 
 export const startServer = async (port: number) => {
+  if (config.NODE_ENV === 'development' && config.MODE !== 'test') {
+    app.use('/', (_, res) => {
+      return res.send(renderTrpcPanel(appRouter, { url: `http://localhost:${port}/docs`, transformer: 'superjson' }));
+    });
+  }
   await loginToImmuDB();
   let server = app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

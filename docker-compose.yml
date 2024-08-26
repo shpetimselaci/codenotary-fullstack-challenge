@@ -16,6 +16,7 @@ services:
       - vpn
     ports:
       - 7070:7070
+      - 4000:4000
     depends_on:
       - db
     volumes:
