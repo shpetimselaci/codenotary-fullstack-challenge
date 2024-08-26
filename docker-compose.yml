@@ -16,6 +16,13 @@ services:
       - 8080:8080
     depends_on:
       - db
+    environment:
+      - IMMU_HOST=vpn
+      - IMMU_PORT=vpn
+      - IMMU_USER=immudb
+      - IMMU_PASSWORD=immudb # might not wanna do this outside development
+      - IMMU_DB=defaultdb
+      - PORT=8080
   client:
     image: node:22-alpine
     networks:
