@@ -2,7 +2,7 @@ import * as trpcExpress from '@trpc/server/adapters/express';
 import cors from 'cors';
 import express from 'express';
 import { appRouter } from './trpc';
-import { loginToImmuDB, logoutImmuDB } from '~/sdk/immudb';
+import { closeConnection, setupImmuDb } from '~/sdk/immudb';
 import { createContext } from './context';
 import { renderTrpcPanel } from 'trpc-panel';
 import { config } from './config';
@@ -29,7 +29,7 @@ export const startServer = async (port: number) => {
       return res.send(renderTrpcPanel(appRouter, { url: `http://localhost:${port}/docs`, transformer: 'superjson' }));
     });
   }
-  await loginToImmuDB();
+  await setupImmuDb();
   let server = app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
   });
@@ -37,7 +37,7 @@ export const startServer = async (port: number) => {
   process.on('SIGTERM', () => {
     if (!loggedOut) {
       loggedOut = true;
-      logoutImmuDB();
+      closeConnection();
     }
     server.close();
   });
@@ -46,7 +46,7 @@ export const startServer = async (port: number) => {
     console.log('SIGINT signal received.');
     if (!loggedOut) {
       loggedOut = true;
-      logoutImmuDB();
+      closeConnection();
     }
     server.close();
   });

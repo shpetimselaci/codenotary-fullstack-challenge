@@ -1,13 +1,18 @@
 import { config } from '~/config';
-import ImmudbClient from 'immudb-node';
-import Parameters from 'immudb-node/dist/types/parameters';
+import { Client, types } from '@codenotary/immudb-node';
 
-export const immuDBClient = new ImmudbClient({ host: config.IMMUDB_HOST, port: config.IMMUDB_PORT });
+export let immuDBClient: Client;
 
-export const loginToImmuDB = async () => {
-  return immuDBClient.login({ password: config.IMMUDB_PASSWORD, user: config.IMMUDB_USER } as Parameters.Login);
+export const setupImmuDb = () => {
+  immuDBClient = new Client({
+    host: config.IMMUDB_HOST,
+    port: config.IMMUDB_PORT,
+    database: config.IMMUDB_DB,
+    user: config.IMMUDB_USER,
+    password: config.IMMUDB_PASSWORD,
+  });
 };
 
-export const logoutImmuDB = () => {
-  return immuDBClient.logout();
+export const closeConnection = () => {
+  return immuDBClient?.close();
 };
