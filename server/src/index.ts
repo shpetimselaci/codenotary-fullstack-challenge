@@ -1,4 +1,4 @@
 import { config } from './config';
 import { startServer } from './server';
 
-startServer(config.PORT);
+startServer(Number(process.argv.slice(2)[0]) || config.PORT);

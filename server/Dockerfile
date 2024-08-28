@@ -1,4 +1,4 @@
-FROM arm64v8/node:22.6-slim as base
+FROM arm64v8/node:22.3-slim as base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
