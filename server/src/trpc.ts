@@ -1,5 +1,5 @@
 import { initTRPC } from '@trpc/server';
-import { accountRouter } from './modules/account/router';
+import { transactionsRouter } from './modules/transactions/router';
 import superjson from 'superjson';
 import { Context } from './context';
 
@@ -15,7 +15,7 @@ export const publicProcedure = t.procedure;
 export const createCallerFactory = t.createCallerFactory;
 
 export const appRouter = router({
-  account: accountRouter(router, publicProcedure),
+  transactions: transactionsRouter(router, publicProcedure),
 });
 
 export type AppRouter = typeof appRouter;

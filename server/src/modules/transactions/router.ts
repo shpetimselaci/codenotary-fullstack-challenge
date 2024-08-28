@@ -1,13 +1,15 @@
 import { Procedure, Router } from 'trpc';
 import { accountSchema, listInboundSchema, listOutboundSchema } from './validation';
+import { listAllTransactions } from './service';
 
-export const accountRouter = (router: Router, procedure: Procedure) =>
-  router({
+export const transactionsRouter = (router: Router, procedure: Procedure) => {
+  return router({
     list: procedure
       .input(listInboundSchema)
       .output(listOutboundSchema)
-      .query(async () => {
-        return [];
+      .query(async (s) => {
+        return listAllTransactions(s.input);
       }),
     add: procedure.input(accountSchema).mutation(async () => {}),
   });
+};

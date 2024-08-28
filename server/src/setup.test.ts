@@ -53,7 +53,7 @@ afterAll(async () => {
 });
 
 test('simple query', async () => {
-  const res = await t.client.account.list.query({ limit: 10 });
+  const res = await t.client.transactions.list.query({ limit: 10 });
   expect(res).toMatchInlineSnapshot(`
       []
     `);
