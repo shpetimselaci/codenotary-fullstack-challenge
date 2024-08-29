@@ -26,6 +26,8 @@ services:
       - db
     volumes:
       - ./server/tsconfig.json:/home/server/tsconfig.json
+      - ./server/migrations:/home/server/migrations
+      - ./server/migrator.ts:/home/server/migrator.ts
       - ./server/src:/home/server/src
       - ./server/package.json:/home/server/package.json
       - ./server/pnpm-lock.yaml:/home/server/pnpm-lock.yaml
