@@ -3,6 +3,7 @@ import { Pool } from 'node-postgres';
 import { config } from '~/config';
 
 import { TransactionsTable } from '../modules/transactions/schema';
+import { DB_LOGGER } from '~/loggers/db';
 
 export interface Database {
   transactions: TransactionsTable;
@@ -23,6 +24,20 @@ const dialect = new PostgresDialect({
 export const db = new Kysely<Database>({
   dialect: dialect,
   log(event) {
-    console.log('EVENT', event);
+    if (event.level === 'error') {
+      DB_LOGGER.error('Query failed : ', {
+        durationMs: event.queryDurationMillis,
+        error: event.error,
+        sql: event.query.sql,
+        params: event.query.parameters,
+      });
+    } else {
+      // `'query'`
+      DB_LOGGER.info('Query executed : ', {
+        durationMs: event.queryDurationMillis,
+        sql: event.query.sql,
+        params: event.query.parameters,
+      });
+    }
   },
 });
