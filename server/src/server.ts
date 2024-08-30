@@ -6,6 +6,7 @@ import { closeConnection } from '~/sdk/immudb';
 import { createContext } from './context';
 import { renderTrpcPanel } from 'trpc-panel';
 import { config } from './config';
+import { RUNTIME_LOGGER } from './loggers/server';
 
 const app = express();
 
@@ -30,10 +31,12 @@ export const startServer = async (port: number) => {
     });
   }
   let server = app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+    RUNTIME_LOGGER.info(`Server running on http://localhost:${port}`);
   });
   let loggedOut = false;
   process.on('SIGTERM', () => {
+    RUNTIME_LOGGER.info('SIGTERM signal received.');
+
     if (!loggedOut) {
       loggedOut = true;
       closeConnection();
@@ -42,7 +45,7 @@ export const startServer = async (port: number) => {
   });
 
   process.on('SIGINT', () => {
-    console.log('SIGINT signal received.');
+    RUNTIME_LOGGER.info('SIGINT signal received.');
     if (!loggedOut) {
       loggedOut = true;
       closeConnection();
