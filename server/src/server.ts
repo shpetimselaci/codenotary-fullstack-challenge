@@ -2,7 +2,7 @@ import * as trpcExpress from '@trpc/server/adapters/express';
 import cors from 'cors';
 import express from 'express';
 import { appRouter } from './trpc';
-import { closeConnection, setupImmuDb } from '~/sdk/immudb';
+import { closeConnection } from '~/sdk/immudb';
 import { createContext } from './context';
 import { renderTrpcPanel } from 'trpc-panel';
 import { config } from './config';
@@ -29,7 +29,6 @@ export const startServer = async (port: number) => {
       return res.send(renderTrpcPanel(appRouter, { url: `http://localhost:${port}/docs`, transformer: 'superjson' }));
     });
   }
-  await setupImmuDb();
   let server = app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
   });
