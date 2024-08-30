@@ -9,7 +9,8 @@ export const up: MigrationFn = async (params) => {
   const query = queryBuilder.schema
     .createTable('transactions')
     .ifNotExists()
-    .addColumn('account_id', sql`INTEGER AUTO_INCREMENT`)
+    .addColumn('transaction_id', sql`UUID NOT NULL`)
+    .addColumn('account_number', sql`VARCHAR NOT NULL`)
     .addColumn('account_name', sql`VARCHAR NOT NULL`)
     // .addColumn('tr_type', sql`varchar`, (col) => col.notNull().check(sql`type IN ('receiving', 'sending')`)) // wont allow check?
     .addColumn('type', sql`VARCHAR[9] NOT NULL`)
@@ -17,7 +18,7 @@ export const up: MigrationFn = async (params) => {
     .addColumn('address', sql`VARCHAR NOT NULL`)
     // .addColumn('amount', 'integer', (col) => col.notNull().check(sql`amount > 0`))
     .addColumn('amount', sql`INTEGER NOT NULL`)
-    .addColumn('created_at', sql`TIMESTAMP NOT NULL, PRIMARY KEY (account_id)`); // couldnt add primary key account_id in some other way -- hack!
+    .addColumn('created_at', sql`VARCHAR NOT NULL, PRIMARY KEY (transaction_id)`); // couldnt add primary key account_id in some other way -- hack!
 
   return query.execute();
 };
