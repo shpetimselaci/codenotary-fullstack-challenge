@@ -1,20 +1,32 @@
 import z from 'zod';
 
-const iban = new RegExp(
-  '/^(?:((?:IT|SM)d{2}[A-Z]{1}d{22})|(NLd{2}[A-Z]{4}d{10})|(LVd{2}[A-Z]{4}d{13})|((?:BG|GB|IE)d{2}[A-Z]{4}d{14})|(GId{2}[A-Z]{4}d{15})|(ROd{2}[A-Z]{4}d{16})|(MTd{2}[A-Z]{4}d{23})|(NOd{13})|((?:DK|FI)d{16})|((?:SI)d{17})|((?:AT|EE|LU|LT)d{18})|((?:HR|LI|CH)d{19})|((?:DE|VA)d{20})|((?:AD|CZ|ES|MD|SK|SE)d{22})|(PTd{23})|((?:IS)d{24})|((?:BE)d{14})|((?:FR|MC|GR)d{25})|((?:PL|HU|CY)d{26}))$',
-  'gm',
-);
+const iban =
+  /^AL\d{10}[0-9A-Z]{16}$|^AD\d{10}[0-9A-Z]{12}$|^AT\d{18}$|^BH\d{2}[A-Z]{4}[0-9A-Z]{14}$|^BE\d{14}$|^BA\d{18}$|^BG\d{2}[A-Z]{4}\d{6}[0-9A-Z]{8}$|^HR\d{19}$|^CY\d{10}[0-9A-Z]{16}$|^CZ\d{22}$|^DK\d{16}$|^FO\d{16}$|^GL\d{16}$|^DO\d{2}[0-9A-Z]{4}\d{20}$|^EE\d{18}$|^FI\d{16}$|^FR\d{12}[0-9A-Z]{11}\d{2}$|^GE\d{2}[A-Z]{2}\d{16}$|^DE\d{20}$|^GI\d{2}[A-Z]{4}[0-9A-Z]{15}$|^GR\d{9}[0-9A-Z]{16}$|^HU\d{26}$|^IS\d{24}$|^IE\d{2}[A-Z]{4}\d{14}$|^IL\d{21}$|^IT\d{2}[A-Z]\d{10}[0-9A-Z]{12}$|^[A-Z]{2}\d{5}[0-9A-Z]{13}$|^KW\d{2}[A-Z]{4}22!$|^LV\d{2}[A-Z]{4}[0-9A-Z]{13}$|^LB\d{6}[0-9A-Z]{20}$|^LI\d{7}[0-9A-Z]{12}$|^LT\d{18}$|^LU\d{5}[0-9A-Z]{13}$|^MK\d{5}[0-9A-Z]{10}\d{2}$|^MT\d{2}[A-Z]{4}\d{5}[0-9A-Z]{18}$|^MR13\d{23}$|^MU\d{2}[A-Z]{4}\d{19}[A-Z]{3}$|^MC\d{12}[0-9A-Z]{11}\d{2}$|^ME\d{20}$|^NL\d{2}[A-Z]{4}\d{10}$|^NO\d{13}$|^PL\d{10}[0-9A-Z]{,16}n$|^PT\d{23}$|^RO\d{2}[A-Z]{4}[0-9A-Z]{16}$|^SM\d{2}[A-Z]\d{10}[0-9A-Z]{12}$|^SA\d{4}[0-9A-Z]{18}$|^RS\d{20}$|^SK\d{22}$|^SI\d{17}$|^ES\d{22}$|^SE\d{22}$|^CH\d{7}[0-9A-Z]{12}$|^TN59\d{20}$|^TR\d{7}[0-9A-Z]{17}$|^AE\d{21}$|^GB\d{2}[A-Z]{4}\d{14}$/;
 
-export const accountSchema = z.object({
-  account_number: z.number().int().describe('Account number - must be an string, validated as ULID'),
+const account_number = /^\d{9,18}$/;
+
+export const addTransactionSchema = z.object({
+  account_number: z
+    .string()
+    .regex(account_number)
+    .transform((s) => String(s))
+    .describe('Account number - must be an string'),
   account_name: z.string().min(1).describe('Account name - must be a string'),
-  iban: z.string({ message: 'IBAN is invalid!' }).regex(iban).describe('IBAN - must be a valid IBAN string'),
+  iban: z.string().regex(iban, 'IBAN is invalid!').describe('IBAN - must be a valid IBAN string'),
   address: z.string().min(3).describe('Address - type string'),
   amount: z.number().describe('Amount - type number'),
   type: z.enum(['sending', 'receiving']).describe('Type - enum (sending, receiving)'),
 });
 
-export const listOutboundSchema = accountSchema.array();
+export const addedTransactionSchema = z.object({
+  ...addTransactionSchema.shape,
+  transaction_id: z.string().uuid(),
+  created_at: z.string().datetime(),
+});
+
+export type AddTransactionSchema = typeof addTransactionSchema._type;
+export type AddedTransactionSchema = typeof addedTransactionSchema._type;
+export const listOutboundSchema = addedTransactionSchema.array();
 
 export const listInboundSchema = z.object({
   limit: z.number().min(5).max(100).optional(),
