@@ -1,4 +1,4 @@
-export type TransactionsTable = {
+export type Transaction = {
   transaction_id: string;
   account_number: string;
   account_name: string;
@@ -8,6 +8,3 @@ export type TransactionsTable = {
   amount: number;
   created_at: string;
 };
-
-export type Transaction = TransactionsTable;
-export type NewTransaction = TransactionsTable;

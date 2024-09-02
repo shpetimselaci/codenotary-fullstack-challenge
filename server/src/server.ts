@@ -9,7 +9,7 @@ import { createContext } from './context';
 import { RUNTIME_LOGGER } from './loggers/server';
 import { appRouter } from './trpc';
 
-const app = express();
+const app: ReturnType<typeof express> = express();
 
 app.use(cors());
 
