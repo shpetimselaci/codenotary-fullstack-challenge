@@ -1,7 +1,8 @@
 import type http from 'http';
+
+import { createTRPCProxyClient, httpBatchLink, HttpBatchLinkOptions } from '@trpc/client';
 import fetch from 'node-fetch';
 import SuperJSON from 'superjson';
-import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 
 import { startServer as _startServer } from './server';
 import { appRouter } from './trpc';
@@ -11,9 +12,9 @@ async function startServer() {
   const { server, port } = await new Promise<{
     server: http.Server;
     port: number;
-  }>(async (resolve) => {
+  }>((resolve) => {
     const port = Math.round(Math.random() * 1000);
-    const server = await _startServer(port);
+    const server = _startServer(port);
 
     resolve({
       server,
@@ -25,7 +26,7 @@ async function startServer() {
     links: [
       httpBatchLink({
         url: `http://localhost:${port}/trpc`,
-        fetch: fetch as any,
+        fetch: fetch as HttpBatchLinkOptions['fetch'],
       }),
     ],
     transformer: SuperJSON,
@@ -35,7 +36,11 @@ async function startServer() {
     close: () =>
       new Promise<void>((resolve, reject) => {
         server.close((err) => {
-          err ? reject(err) : resolve();
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
         });
       }),
     port,
@@ -52,6 +57,6 @@ afterAll(async () => {
   await t.close();
 });
 
-test('Simple test', async () => {
+test('Simple test', () => {
   expect(1).toBe(1);
 });

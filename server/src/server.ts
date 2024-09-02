@@ -1,12 +1,13 @@
 import * as trpcExpress from '@trpc/server/adapters/express';
 import cors from 'cors';
 import express from 'express';
-import { appRouter } from './trpc';
-import { closeConnection } from '~/sdk/immudb';
-import { createContext } from './context';
 import { renderTrpcPanel } from 'trpc-panel';
+import { closeConnection } from '~/sdk/immudb';
+
 import { config } from './config';
+import { createContext } from './context';
 import { RUNTIME_LOGGER } from './loggers/server';
+import { appRouter } from './trpc';
 
 const app = express();
 
@@ -24,13 +25,13 @@ app.use('/health', (_req, res) => {
   return res.type('application/json').status(200).json('ok');
 });
 
-export const startServer = async (port: number) => {
+export const startServer = (port: number) => {
   if (config.NODE_ENV === 'development' && config.MODE !== 'test') {
     app.use('/', (_, res) => {
       return res.send(renderTrpcPanel(appRouter, { url: `http://localhost:${port}/docs`, transformer: 'superjson' }));
     });
   }
-  let server = app.listen(port, () => {
+  const server = app.listen(port, () => {
     RUNTIME_LOGGER.info(`Server running on http://localhost:${port}`);
   });
   let loggedOut = false;
@@ -39,7 +40,7 @@ export const startServer = async (port: number) => {
 
     if (!loggedOut) {
       loggedOut = true;
-      closeConnection();
+      void closeConnection();
     }
     server.close();
   });
@@ -48,7 +49,7 @@ export const startServer = async (port: number) => {
     RUNTIME_LOGGER.info('SIGINT signal received.');
     if (!loggedOut) {
       loggedOut = true;
-      closeConnection();
+      void closeConnection();
     }
     server.close();
   });

@@ -1,18 +1,19 @@
 import { v7 as uuid } from 'uuid';
-import { AddTransactionSchema } from './validation';
 import { RUNTIME_LOGGER } from '~/loggers/server';
-import { db } from '~/sdk/knex';
+import { db, Result } from '~/sdk/knex';
 import { unWrapRows } from '~/utils/db';
+
 import { Transaction } from './schema';
+import { AddTransactionSchema } from './validation';
 
 export const listAllTransactions = async ({ limit = 20, offset = 0 }: { limit?: number; offset?: number }) => {
   const query = db.select('*').table('transactions').offset(offset).limit(limit).orderBy('created_at', 'asc').toQuery();
-  let result = await db.raw(query);
+  const result = await (db.raw(query) as Promise<Result>);
   return unWrapRows<Transaction>(result);
 };
 
 export const addTransaction = async (values: AddTransactionSchema) => {
-  let transactionId = uuid();
+  const transactionId = uuid();
 
   const insert = {
     ...values,
@@ -32,7 +33,7 @@ export const addTransaction = async (values: AddTransactionSchema) => {
     .whereRaw(`transaction_id = '${transactionId}'::UUID`)
     .toQuery();
 
-  const raw = await db.raw(insertedRowQuery);
+  const raw = await (db.raw<Result>(insertedRowQuery) as Promise<Result>);
 
   return unWrapRows<Transaction>(raw)[0];
 };

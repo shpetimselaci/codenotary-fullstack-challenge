@@ -1,7 +1,5 @@
-import { ColumnType, Generated, Insertable, Selectable } from 'kysely';
-
-export interface TransactionsTable {
-  transaction_id: Generated<string>;
+export type TransactionsTable = {
+  transaction_id: string;
   account_number: string;
   account_name: string;
   type: 'receiving' | 'sending';
@@ -9,7 +7,7 @@ export interface TransactionsTable {
   address: string;
   amount: number;
   created_at: string;
-}
+};
 
-export type Transaction = Selectable<TransactionsTable>;
-export type NewTransaction = Insertable<TransactionsTable>;
+export type Transaction = TransactionsTable;
+export type NewTransaction = TransactionsTable;

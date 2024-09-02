@@ -1,18 +1,28 @@
-import knex, { Knex } from 'knex';
+import knex from 'knex';
 import { config } from '~/config';
 import { DB_LOGGER } from '~/loggers/db';
 import { Transaction } from '~/modules/transactions/schema';
 
 declare module 'knex/types/tables' {
-  interface Tables {
+  // @ts-expect-error ts-2300
+  type Tables = {
     transactions: Transaction;
-    transactions_composite: Knex.CompositeTableType<
-      Transaction,
-      Pick<Transaction, 'transaction_id'> & Partial<Pick<Transaction, 'created_at'>>,
-      Partial<Omit<Transaction, 'transaction_id' | 'created_at'>>
-    >;
-  }
+  };
 }
+
+export type Result = {
+  command: 'ok';
+  rows: Array<Record<string, string>>;
+  fields: Array<{
+    name: string;
+    tableID: number;
+    columnID: number;
+    dataTypeID: number;
+    dataTypeSize: number;
+    dataTypeModifier: number;
+    format: string;
+  }>;
+};
 
 export const db = knex({
   client: 'pg',

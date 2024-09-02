@@ -10,8 +10,9 @@ const umzug = new Umzug({
   logger: console,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 exports.umzug = umzug;
 
 if (require.main === module) {
-  umzug.runAsCLI();
+  void umzug.runAsCLI();
 }

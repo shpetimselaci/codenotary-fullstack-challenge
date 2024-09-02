@@ -1,7 +1,8 @@
 import { initTRPC } from '@trpc/server';
-import { transactionsRouter } from './modules/transactions/router';
 import superjson from 'superjson';
+
 import { Context } from './context';
+import { transactionsRouter } from './modules/transactions/router';
 
 const t = initTRPC.context<Context>().create({ transformer: superjson });
 

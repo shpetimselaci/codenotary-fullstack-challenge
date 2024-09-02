@@ -1,7 +1,7 @@
-import { config } from '~/config';
 import { Client } from '@codenotary/immudb-node';
+import { config } from '~/config';
 
-export let immuDBClient = new Client({
+export const immuDBClient = new Client({
   host: config.IMMUDB_HOST,
   port: config.IMMUDB_PORT,
   database: config.IMMUDB_DB,
@@ -10,5 +10,5 @@ export let immuDBClient = new Client({
 });
 
 export const closeConnection = () => {
-  return immuDBClient?.close();
+  return immuDBClient.close();
 };
