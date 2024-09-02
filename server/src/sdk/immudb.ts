@@ -1,5 +1,5 @@
 import { config } from '~/config';
-import { Client, types } from '@codenotary/immudb-node';
+import { Client } from '@codenotary/immudb-node';
 
 export let immuDBClient = new Client({
   host: config.IMMUDB_HOST,

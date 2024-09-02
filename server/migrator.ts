@@ -1,5 +1,5 @@
 import { MigrationFn as MigrationFunction, Umzug } from 'umzug';
-import { db } from '~/sdk/kesley';
+import { db } from '~/sdk/knex';
 
 export type MigrationFn = MigrationFunction<{ queryBuilder: typeof db }>;
 const umzug = new Umzug({

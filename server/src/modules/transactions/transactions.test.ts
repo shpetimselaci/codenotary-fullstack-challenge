@@ -3,11 +3,10 @@ import { t } from '~/setup.test';
 import { addTransactionSchema } from './validation';
 import { isValid } from 'date-fns';
 import { string } from 'zod';
+import { Transaction } from './schema';
+import { expectTypeOf } from 'vitest';
 
 describe('Service should allow listing of transactions within the account and should be able to add transactions', async () => {
-  test('List all transactions of the account', async ({ expect }) => {
-    // expect(await t.client.transactions.list.query({ limit: 10 })).toEqual([]);
-  });
   suite('Add transaction to the account', () => {
     test('Test for Invalid IBAN', async () => {
       const insert = {
@@ -37,6 +36,12 @@ describe('Service should allow listing of transactions within the account and sh
       expect(response).contains(insert);
       expect(isValid(response.created_at));
       expect(string().uuid().safeParse(response.transaction_id).success).toBe(true);
+    });
+
+    test('List all transactions of the account', async ({ expect }) => {
+      const result = await t.client.transactions.list.query({ limit: 10 });
+      expect(result.length).toBeGreaterThan(1);
+      expectTypeOf(result[0]).toEqualTypeOf<Transaction>();
     });
   });
 });

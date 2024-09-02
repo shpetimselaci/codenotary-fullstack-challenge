@@ -1,12 +1,14 @@
-import { db, pool } from '~/sdk/kesley';
 import { v7 as uuid } from 'uuid';
-import { getInsertStringified } from '~/utils/db';
 import { AddTransactionSchema } from './validation';
 import { RUNTIME_LOGGER } from '~/loggers/server';
+import { db } from '~/sdk/knex';
+import { unWrapRows } from '~/utils/db';
+import { Transaction } from './schema';
 
 export const listAllTransactions = async ({ limit = 20, offset = 0 }: { limit?: number; offset?: number }) => {
-  const query = await db.selectFrom('transactions').selectAll().limit(limit).offset(offset).execute();
-  return query;
+  const query = db.select('*').table('transactions').offset(offset).limit(limit).orderBy('created_at', 'asc').toQuery();
+  let result = await db.raw(query);
+  return unWrapRows<Transaction>(result);
 };
 
 export const addTransaction = async (values: AddTransactionSchema) => {
@@ -18,8 +20,19 @@ export const addTransaction = async (values: AddTransactionSchema) => {
     created_at: new Date().toISOString(),
   };
 
-  const { columns: cols, values: vals } = getInsertStringified(insert);
   RUNTIME_LOGGER.info('Inserting values into db...');
-  await pool.query(`insert into transactions (${cols}) values (${vals})`);
-  return insert;
+
+  const query = db('transactions').insert(insert).toQuery();
+
+  await db.raw(query); // inserting..
+  const insertedRowQuery = db
+    .from('transactions')
+    .select()
+    .first()
+    .whereRaw(`transaction_id = '${transactionId}'::UUID`)
+    .toQuery();
+
+  const raw = await db.raw(insertedRowQuery);
+
+  return unWrapRows<Transaction>(raw)[0];
 };
