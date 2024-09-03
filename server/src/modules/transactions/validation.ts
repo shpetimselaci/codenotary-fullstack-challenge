@@ -26,9 +26,12 @@ export const addedTransactionSchema = z.object({
 
 export type AddTransactionSchema = typeof addTransactionSchema._type;
 export type AddedTransactionSchema = typeof addedTransactionSchema._type;
-export const listOutboundSchema = addedTransactionSchema.array();
+export const listOutboundSchema = z.object({
+  nextCursor: z.number().optional(),
+  items: addedTransactionSchema.array(),
+});
 
 export const listInboundSchema = z.object({
   limit: z.number().min(5).max(100).optional(),
-  offset: z.number().min(0).optional(),
+  cursor: z.number().min(0).optional(),
 });

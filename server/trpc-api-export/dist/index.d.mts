@@ -57,32 +57,38 @@ declare const appRouter: _trpc_server.CreateRouterInner<
             };
             _input_in: {
               limit?: number | undefined;
-              offset?: number | undefined;
+              cursor?: number | undefined;
             };
             _input_out: {
               limit?: number | undefined;
-              offset?: number | undefined;
+              cursor?: number | undefined;
             };
             _output_in: {
-              account_number: string;
-              account_name: string;
-              iban: string;
-              address: string;
-              amount: number;
-              type: 'receiving' | 'sending';
-              transaction_id: string;
-              created_at: string;
-            }[];
+              items: {
+                account_number: string;
+                account_name: string;
+                iban: string;
+                address: string;
+                amount: number;
+                type: 'receiving' | 'sending';
+                transaction_id: string;
+                created_at: string;
+              }[];
+              nextCursor?: number | undefined;
+            };
             _output_out: {
-              account_number: string;
-              account_name: string;
-              iban: string;
-              address: string;
-              amount: number;
-              type: 'receiving' | 'sending';
-              transaction_id: string;
-              created_at: string;
-            }[];
+              items: {
+                account_number: string;
+                account_name: string;
+                iban: string;
+                address: string;
+                amount: number;
+                type: 'receiving' | 'sending';
+                transaction_id: string;
+                created_at: string;
+              }[];
+              nextCursor?: number | undefined;
+            };
           },
           unknown
         >;

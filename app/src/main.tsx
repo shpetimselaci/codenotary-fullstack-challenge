@@ -1,5 +1,5 @@
 import { StrictMode } from "react";
-
+import "./styles/global.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
@@ -11,8 +11,8 @@ import ReactDOM from "react-dom/client";
 
 import { reactQueryClient } from "./clients/react-query";
 import {
-  trpcApiBoilerplateClient,
-  trpcApiBoilerplateClientProvider,
+  TrpcApiBoilerplateClient,
+  TrpcApiBoilerplateClientProvider,
 } from "./clients/trpc-client";
 import { routeTree } from "./routeTree.gen";
 
@@ -34,15 +34,15 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <trpcApiBoilerplateClient.Provider
-        client={trpcApiBoilerplateClientProvider}
+      <TrpcApiBoilerplateClient.Provider
+        client={TrpcApiBoilerplateClientProvider}
         queryClient={reactQueryClient}
       >
         <QueryClientProvider client={reactQueryClient}>
           <RouterProvider router={router} />
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
-      </trpcApiBoilerplateClient.Provider>
+      </TrpcApiBoilerplateClient.Provider>
     </StrictMode>
   );
 }

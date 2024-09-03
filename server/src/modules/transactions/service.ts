@@ -6,10 +6,19 @@ import { unWrapRows } from '~/utils/db';
 import { Transaction } from './schema';
 import { AddTransactionSchema } from './validation';
 
-export const listAllTransactions = async ({ limit = 20, offset = 0 }: { limit?: number; offset?: number }) => {
-  const query = db.select('*').table('transactions').offset(offset).limit(limit).orderBy('created_at', 'asc').toQuery();
+export const listAllTransactions = async ({ limit = 20, cursor = 0 }: { limit?: number; cursor?: number }) => {
+  const query = db.select('*').table('transactions').limit(limit).offset(cursor).orderBy('created_at', 'asc').toQuery();
   const result = await (db.raw(query) as Promise<Result>);
-  return unWrapRows<Transaction>(result);
+  let nextCursor = cursor;
+  const unwrappedRows = unWrapRows<Transaction>(result); // db is not getting offset rows after first fetch no reason why...
+  if (limit == unwrappedRows.length) {
+    nextCursor += limit - 1;
+  }
+
+  return {
+    nextCursor,
+    items: unwrappedRows,
+  };
 };
 
 export const addTransaction = async (values: AddTransactionSchema) => {

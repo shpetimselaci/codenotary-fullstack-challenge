@@ -1,4 +1,4 @@
-import { HomePage } from "views";
+import { HomePage } from "~/views/index";
 
 import { createLazyFileRoute } from "@tanstack/react-router";
 

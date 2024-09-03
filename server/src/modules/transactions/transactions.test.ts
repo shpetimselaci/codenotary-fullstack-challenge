@@ -44,8 +44,8 @@ describe('Service should allow listing of transactions within the account and sh
 
     test('List all transactions of the account', async ({ expect }) => {
       const result = await t.client.transactions.list.query({ limit: 10 });
-      expect(result.length).toBeGreaterThan(1);
-      expectTypeOf(result[0]).toEqualTypeOf<Transaction>();
+      expect(result.items.length).toBeGreaterThan(1);
+      expectTypeOf(result.items[0]).toEqualTypeOf<Transaction>();
     });
   });
 });
