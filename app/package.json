@@ -4,18 +4,29 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --host",
+    "dev": "VITE_PUBLIC_TRPC_API=http://localhost:7070/trpc vite --port=3000 --host",
     "build": "tsc -b && vite build",
-    "trpc-api-import": "copyfiles -f \"../server/trpc-api-export/**/**.d.mts\" -V ./trpc-dist",
+    "trpc-api-import": "copyfiles -f \"../server/trpc-api-export/dist/**\" -V ./src/clients/trpc-client/api-types",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.36.1",
+    "@tanstack/react-router": "^1.52.5",
+    "@trpc/client": "^10.45.2",
+    "@trpc/react-query": "^10.45.2",
+    "@trpc/server": "^10.45.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "superjson": "^2.2.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@tanstack/react-query-devtools": "^4.36.1",
+    "@tanstack/router-devtools": "^1.52.5",
+    "@tanstack/router-plugin": "^1.52.0",
+    "@tanstack/router-vite-plugin": "^1.52.0",
     "@types/node": "^22.5.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -27,7 +38,8 @@
     "globals": "^15.9.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vite-tsconfig-paths": "^5.0.1"
   },
   "pnpm": {
     "overrides": {
