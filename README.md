@@ -36,13 +36,27 @@ You'll find documentation in url `http://localhost:7070/docs` with all the route
 After running `docker compose up`, run `docker ps` and find the id of the container that is running the Node.js, and ssh to it using:
 
 ```zsh
-docker exec -it UNIQUE_ID /bin/sh
+docker exec -it UNIQUE_ID /bin/bash
 
 ```
 
 After getting in run:
 
 ```zsh
-pnpm run test
+pnpm test
 
+```
+
+## App
+
+App will be exposed on 3000 after running docker compose up. Run `docker ps` and find the id of the container that is running the Node.js, and ssh to it using:
+
+```zsh
+docker exec -it UNIQUE_ID /bin/bash
+```
+
+and then:
+
+```zsh
+pnpm test
 ```
