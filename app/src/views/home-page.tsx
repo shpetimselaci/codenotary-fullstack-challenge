@@ -1,4 +1,6 @@
-import { useTransactions } from "~/hooks/useTransactions";
+import { AddTransaction } from "~/components/add-transaction";
+import { useAddTransactionMutation } from "~/hooks/trpc/use-add-transaction-mutation";
+import { useTransactions } from "~/hooks/trpc/use-transaction";
 import { Button } from "~/shell/button";
 
 export const HomePage = () => {
@@ -9,13 +11,10 @@ export const HomePage = () => {
     hasNextPage,
     fetchNextPage,
   } = useTransactions();
+
+  const mutation = useAddTransactionMutation();
   return (
     <div>
-      <div className="flex flex-row justify-between">
-        <h3>Account transactions</h3>
-
-        <Button size="sm">Add</Button>
-      </div>
       <div className="mt-4 flex flex-wrap">
         <table className=" w-full rounded-lg text-md table-auto border-collapse p-2 border border-b mb-1 border-slate-500 ">
           <thead>
@@ -32,8 +31,9 @@ export const HomePage = () => {
               <th className="border rounded-md border-slate-600">Created At</th>
             </tr>
           </thead>
-
           <tbody>
+            <AddTransaction mutation={mutation} />
+
             {isInitialLoading ? (
               <tr>
                 <td>Loading...</td>

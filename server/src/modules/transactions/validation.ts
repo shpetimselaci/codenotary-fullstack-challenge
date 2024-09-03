@@ -7,15 +7,20 @@ const account_number = /^\d{9,18}$/;
 
 export const addTransactionSchema = z.object({
   account_number: z
-    .string()
+    .string({ message: 'Account number is invalid' })
     .regex(account_number)
     .transform((s) => String(s))
     .describe('Account number - must be an string'),
-  account_name: z.string().min(1).describe('Account name - must be a string'),
+  account_name: z.string({ message: 'Account name is invalid' }).min(1).describe('Account name - must be a string'),
   iban: z.string().regex(iban, 'IBAN is invalid!').describe('IBAN - must be a valid IBAN string'),
-  address: z.string().min(3).describe('Address - type string'),
-  amount: z.number().describe('Amount - type number'),
-  type: z.enum(['sending', 'receiving']).describe('Type - enum (sending, receiving)'),
+  address: z
+    .string({ message: 'Address has to be at least 3 characters long' })
+    .min(3)
+    .describe('Address - type string'),
+  amount: z.coerce.number().describe('Amount - type number'),
+  type: z
+    .enum(['sending', 'receiving'], { message: 'You can only receive or send money' })
+    .describe('Type - enum (sending, receiving)'),
 });
 
 export const addedTransactionSchema = z.object({

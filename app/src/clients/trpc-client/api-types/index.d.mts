@@ -3,6 +3,7 @@ import * as express from 'express';
 import * as qs from 'qs';
 import * as express_serve_static_core from 'express-serve-static-core';
 import superjson from 'superjson';
+import z from 'zod';
 
 declare const appRouter: _trpc_server.CreateRouterInner<
   _trpc_server.RootConfig<{
@@ -177,4 +178,49 @@ type Transaction = {
   created_at: string;
 };
 
-export type { AppRouter, Transaction };
+declare const addTransactionSchema: z.ZodObject<
+  {
+    account_number: z.ZodEffects<z.ZodString, string, string>;
+    account_name: z.ZodString;
+    iban: z.ZodString;
+    address: z.ZodString;
+    amount: z.ZodNumber;
+    type: z.ZodEnum<['sending', 'receiving']>;
+  },
+  'strip',
+  z.ZodTypeAny,
+  {
+    account_number: string;
+    account_name: string;
+    iban: string;
+    address: string;
+    amount: number;
+    type: 'receiving' | 'sending';
+  },
+  {
+    account_number: string;
+    account_name: string;
+    iban: string;
+    address: string;
+    amount: number;
+    type: 'receiving' | 'sending';
+  }
+>;
+declare const listInboundSchema: z.ZodObject<
+  {
+    limit: z.ZodOptional<z.ZodNumber>;
+    cursor: z.ZodOptional<z.ZodNumber>;
+  },
+  'strip',
+  z.ZodTypeAny,
+  {
+    limit?: number | undefined;
+    cursor?: number | undefined;
+  },
+  {
+    limit?: number | undefined;
+    cursor?: number | undefined;
+  }
+>;
+
+export { type AppRouter, type Transaction, addTransactionSchema, listInboundSchema };

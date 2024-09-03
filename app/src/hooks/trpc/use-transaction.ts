@@ -15,7 +15,7 @@ export const useTransactions = () => {
   const transactions = useMemo(() => {
     return (query.data?.pages || []).flatMap((page) => page.items);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query.data?.pages.length]);
+  }, [query.dataUpdatedAt]);
 
   return {
     ...query,
