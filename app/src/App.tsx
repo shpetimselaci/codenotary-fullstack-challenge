@@ -4,7 +4,7 @@ import {
   TrpcApiBoilerplateClient,
   TrpcApiBoilerplateClientProvider,
 } from "./clients/trpc-client";
-import { ReactQueryDevtools } from "node_modules/@tanstack/react-query-devtools/build/lib/devtools";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   createHashHistory,
   createRouter,
