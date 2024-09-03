@@ -81,3 +81,7 @@ More testing could be done on the hooks, shell components and components, etc.
 
 Umzug does have a SequelizeStorage that creates a table for migrations, where you can keep track of things that got migrated or seeded.
 That should've been written down to be handled, but life is short.
+
+# ISSUES with immudb!
+
+SQL queries wouldn't work with passed parameters using a pg connection. It was such a hassle to understand what is going on. Plus had to write my own type mapper to unwrap rows, which had a bad taste.
