@@ -32,6 +32,7 @@ export const db = knex({
     user: config.IMMUDB_USER,
     port: 5432,
     database: config.IMMUDB_DB,
+    connectionTimeout: process.env.npm_lifecycle_event == 'umzug' ? 5000 : undefined,
   },
   version: '1.0',
   log: {

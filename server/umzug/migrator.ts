@@ -3,13 +3,13 @@ import { MIGRATIONS_LOGGER } from '~/loggers/migrations';
 import { db } from '~/sdk/knex';
 
 export type MigrationFn = MigrationFunction<{ queryBuilder: typeof db }>;
-const umzug = new Umzug({
+const migrationsUmzug = new Umzug({
   context: () => ({
     queryBuilder: db,
   }),
 
   migrations: {
-    glob: 'migrations/*.ts',
+    glob: 'umzug/migrations/*.ts',
     resolve: ({ name, path, context }: MigrationParams<{ queryBuilder: typeof db }>) => {
       // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-non-null-assertion
       const migration = require(path!) as { up: MigrationFn; down: MigrationFn };
@@ -26,8 +26,8 @@ const umzug = new Umzug({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-exports.umzug = umzug;
+exports.umzug = migrationsUmzug;
 
 if (require.main === module) {
-  void umzug.runAsCLI();
+  void migrationsUmzug.runAsCLI().then(() => process.exit());
 }
