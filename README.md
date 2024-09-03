@@ -1,6 +1,6 @@
 # Codenotary Fullstack Challenge!
 
-This is a simple application challenge made by Codenotary for their fullstack engineer (frontend focused) position.
+This is a simple application challenge made by Codenotary for their fullstack engineer (frontend focused) position. Thank you for your time!
 
 #### Requirements:
 
@@ -60,3 +60,17 @@ and then:
 ```zsh
 pnpm test
 ```
+
+# Things that could be improved
+
+### DB setup for testing
+
+It would be a whole lot better to run tests locally if there was a inmemory db, or a whole database name that could be removed once tests ran in the backend.
+
+### FE testing
+
+More testing could be done on the hooks, shell components and components, etc.
+
+~~### Refactor of home-page.tsx~~
+
+~~I would be a whole lot better if we had a component like TransactionsTable~~
