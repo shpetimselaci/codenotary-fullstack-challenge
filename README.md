@@ -2,6 +2,8 @@
 
 This is a simple application challenge made by Codenotary for their fullstack engineer (frontend focused) position. Thank you for your time!
 
+Shpetim | Software Engineer
+
 #### Requirements:
 
 - Application is storing accounting information within immudb Vault with the following structure: account number (unique), account name, iban, address, amount, type (sending, receiving)
@@ -74,3 +76,8 @@ More testing could be done on the hooks, shell components and components, etc.
 ~~### Refactor of home-page.tsx~~
 
 ~~I would be a whole lot better if we had a component like TransactionsTable~~
+
+### Migrations table
+
+Umzug does have a SequelizeStorage that creates a table for migrations, where you can keep track of things that got migrated or seeded.
+That should've been written down to be handled, but life is short.
