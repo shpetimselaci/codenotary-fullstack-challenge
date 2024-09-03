@@ -5,9 +5,15 @@ import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
 export const Route = createRootRoute({
   component: () => (
     <>
-      <div className="flex gap-4 bg-blueSky-100/40 p-3 text-blueSky-700">
-        <Link to="/" className="hover:text-blueSky-800 [&.active]:font-bold">
-          Home
+      <div className="flex gap-4 bg-primary-100/40 p-3 text-primary-700">
+        <Link to="/" className="hover:text-primary-800 [&.active]:font-bold">
+          Account transactions
+        </Link>
+        <Link
+          to="/thank-you"
+          className="hover:text-primary [&.active]:font-bold"
+        >
+          Thank you!
         </Link>
       </div>
       <div className="p-3">

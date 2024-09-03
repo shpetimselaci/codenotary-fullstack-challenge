@@ -1,29 +1,23 @@
-import { useMemo } from "react";
-import { TrpcApiBoilerplateClient } from "~/clients/trpc-client";
+import { useTransactions } from "~/hooks/useTransactions";
 import { Button } from "~/shell/button";
 
 export const HomePage = () => {
-  const { data, fetchNextPage, hasNextPage } =
-    TrpcApiBoilerplateClient.transactions.list.useInfiniteQuery(
-      {
-        limit: 10,
-      },
-      {
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-        initialCursor: 0,
-      }
-    );
-
-  const transactions = useMemo(() => {
-    console.warn(data?.pages);
-    return (data?.pages || []).flatMap((page) => page.items);
-  }, [data?.pages.length]);
-
+  const {
+    transactions,
+    isInitialLoading,
+    isLoading,
+    hasNextPage,
+    fetchNextPage,
+  } = useTransactions();
   return (
     <div>
-      <h3>Account transactions</h3>
+      <div className="flex flex-row justify-between">
+        <h3>Account transactions</h3>
+
+        <Button size="sm">Add</Button>
+      </div>
       <div className="mt-4 flex flex-wrap">
-        <table className=" w-full rounded-lg text-sm table-auto border-collapse p-2 border border-b mb-1 border-slate-500 ">
+        <table className=" w-full rounded-lg text-md table-auto border-collapse p-2 border border-b mb-1 border-slate-500 ">
           <thead>
             <tr>
               <th className="border rounded-md border-slate-600">Id</th>
@@ -40,7 +34,7 @@ export const HomePage = () => {
           </thead>
 
           <tbody>
-            {!data?.pages ? (
+            {isInitialLoading ? (
               <tr>
                 <td>Loading...</td>
               </tr>
@@ -75,9 +69,18 @@ export const HomePage = () => {
             )}
           </tbody>
         </table>
-        <Button disabled={!hasNextPage} onClick={() => fetchNextPage()}>
-          Load more
-        </Button>
+        <div className="flex flex-col m-auto">
+          <Button
+            size="sm"
+            disabled={isLoading || !hasNextPage}
+            onClick={() => fetchNextPage()}
+          >
+            Load more
+          </Button>
+          <span className="text-[0.5rem]">
+            (db wont load based off SQL CURSOR...)
+          </span>
+        </div>
       </div>
     </div>
   );
