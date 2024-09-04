@@ -31,10 +31,10 @@ export const listAllTransactions = async ({ limit = 20, cursor = 1 }: { limit?: 
     });
   }
 
-  let nextCursor = data.page;
+  let nextCursor;
   const rows = data.revisions;
   if (limit == rows.length) {
-    nextCursor += 1;
+    nextCursor = data.page + 1;
   }
 
   return {
