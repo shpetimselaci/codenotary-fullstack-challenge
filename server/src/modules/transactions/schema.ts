@@ -8,3 +8,5 @@ export type Transaction = {
   amount: number;
   created_at: string;
 };
+
+export const TRANSACTIONS_COLLECTION_NAME = 'transactions';

@@ -1,5 +1,3 @@
-import * as faker from '@faker-js/faker';
-import { v7 as uuid } from 'uuid';
 import { Transaction } from '~/modules/transactions/schema';
 
 import type { MigrationFn } from '../migrator';
@@ -128,6 +126,6 @@ export const up: MigrationFn = async (params) => {
   }
 };
 
-export const down: MigrationFn = async ({ context }) => {
+export const down: MigrationFn = async () => {
   //
 };

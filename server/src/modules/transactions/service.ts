@@ -1,29 +1,43 @@
+import { TRPCError } from '@trpc/server';
+import { TRPC_ERROR_CODES_BY_KEY, TRPC_ERROR_CODES_BY_NUMBER } from '@trpc/server/rpc';
 import { v7 as uuid } from 'uuid';
+import { config } from '~/config';
 import { RUNTIME_LOGGER } from '~/loggers/server';
-import { db, Result } from '~/sdk/knex';
-import { unWrapRows } from '~/utils/db';
+import { immudbVaultClient } from '~/sdk/immudb-vault';
 
-import { Transaction } from './schema';
+import { TRANSACTIONS_COLLECTION_NAME } from './schema';
 import { AddTransactionSchema } from './validation';
 
 export const listAllTransactions = async ({ limit = 20, cursor = 0 }: { limit?: number; cursor?: number }) => {
-  const query = db
-    .select('*')
-    .table('transactions')
-    .limit(limit)
-    .offset(cursor)
-    .orderBy('created_at', 'desc')
-    .toQuery();
-  const result = await (db.raw(query) as Promise<Result>);
-  let nextCursor = cursor;
-  const unwrappedRows = unWrapRows<Transaction>(result); // db is not getting offset rows after first fetch no reason why...
-  if (limit == unwrappedRows.length) {
-    nextCursor += limit - 1;
+  const { error, data } = await immudbVaultClient.POST('/ledger/{ledger}/collection/{collection}/documents/search', {
+    params: {
+      path: {
+        ledger: config.IMMUDB_DB,
+        collection: TRANSACTIONS_COLLECTION_NAME,
+      },
+    },
+    body: {
+      page: cursor,
+      perPage: limit,
+    },
+  });
+  if (error) {
+    throw new TRPCError({
+      code: TRPC_ERROR_CODES_BY_NUMBER[TRPC_ERROR_CODES_BY_KEY.INTERNAL_SERVER_ERROR],
+      message: error.error,
+      cause: error,
+    });
+  }
+
+  let nextCursor = data.page;
+  const rows = data.revisions;
+  if (limit == rows.length) {
+    nextCursor += 1;
   }
 
   return {
     nextCursor,
-    items: unwrappedRows,
+    items: rows,
   };
 };
 
@@ -38,17 +52,41 @@ export const addTransaction = async (values: AddTransactionSchema) => {
 
   RUNTIME_LOGGER.info('Inserting values into db...');
 
-  const query = db('transactions').insert(insert).toQuery();
+  const { error, data } = await immudbVaultClient.PUT('/ledger/{ledger}/collection/{collection}/document', {
+    params: {
+      path: {
+        ledger: config.IMMUDB_LEDGER,
+        collection: TRANSACTIONS_COLLECTION_NAME,
+      },
+    },
+    body: insert,
+  });
+  if (error) {
+    RUNTIME_LOGGER.error(error);
 
-  await db.raw(query); // inserting..
-  const insertedRowQuery = db
-    .from('transactions')
-    .select()
-    .first()
-    .whereRaw(`transaction_id = '${transactionId}'::UUID`)
-    .toQuery();
+    throw new TRPCError({
+      code: TRPC_ERROR_CODES_BY_NUMBER[TRPC_ERROR_CODES_BY_KEY.INTERNAL_SERVER_ERROR],
+      message: error.error,
+      cause: error,
+    });
+  }
 
-  const raw = await (db.raw<Result>(insertedRowQuery) as Promise<Result>);
+  const response = await immudbVaultClient.GET('/documents/{ref}', {
+    params: {
+      path: {
+        ref: data.documentId,
+      },
+    },
+  });
 
-  return unWrapRows<Transaction>(raw)[0];
+  if (response.error) {
+    RUNTIME_LOGGER.error(response.error);
+    throw new TRPCError({
+      code: TRPC_ERROR_CODES_BY_NUMBER[TRPC_ERROR_CODES_BY_KEY.INTERNAL_SERVER_ERROR],
+      message: response.error.error,
+      cause: response.error,
+    });
+  }
+
+  return response.data.document;
 };

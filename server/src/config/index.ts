@@ -6,6 +6,8 @@ export const environmentVariablesSchema = z.object({
   IMMUDB_USER: z.string(),
   IMMUDB_PASSWORD: z.string().min(3),
   IMMUDB_DB: z.string(),
+  IMMUDB_LEDGER: z.string(),
+  IMMUDB_VAULT_URL: z.string(),
   NODE_ENV: z.string(),
   PORT: z.coerce.number(),
   MODE: z.string().optional(),
