@@ -1,4 +1,6 @@
-import { Transaction } from '~/modules/transactions/schema';
+import { config } from '~/config';
+import { RUNTIME_LOGGER } from '~/loggers/server';
+import { Transaction, TRANSACTIONS_COLLECTION_NAME } from '~/modules/transactions/schema';
 
 import type { MigrationFn } from '../migrator';
 
@@ -113,8 +115,8 @@ export const up: MigrationFn = async (params) => {
   const response = await queryBuilder.PUT('/ledger/{ledger}/collection/{collection}/documents', {
     params: {
       path: {
-        ledger: 'default',
-        collection: 'transactions',
+        ledger: config.IMMUDB_LEDGER,
+        collection: TRANSACTIONS_COLLECTION_NAME,
       },
     },
     body: {
@@ -122,8 +124,11 @@ export const up: MigrationFn = async (params) => {
     },
   });
   if (response.error) {
+    RUNTIME_LOGGER.error(response.error);
     throw new Error(response.error.error);
   }
+
+  return response;
 };
 
 export const down: MigrationFn = async () => {

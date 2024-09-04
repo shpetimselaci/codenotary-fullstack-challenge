@@ -12,7 +12,7 @@ export const up: MigrationFn = async (params) => {
   const response = await queryBuilder.PUT('/ledger/{ledger}/collection/{collection}', {
     params: {
       path: {
-        ledger: config.IMMUDB_DB,
+        ledger: config.IMMUDB_LEDGER,
         collection: TRANSACTIONS_COLLECTION_NAME,
       },
     },
@@ -60,7 +60,7 @@ export const down: MigrationFn = async ({ context: { queryBuilder } }) => {
   const response = await queryBuilder.DELETE('/ledger/{ledger}/collection/{collection}', {
     params: {
       path: {
-        ledger: config.IMMUDB_DB,
+        ledger: config.IMMUDB_LEDGER,
         collection: TRANSACTIONS_COLLECTION_NAME,
       },
     },

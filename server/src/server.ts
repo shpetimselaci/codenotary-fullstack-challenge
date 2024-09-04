@@ -34,23 +34,15 @@ export const startServer = (port: number) => {
   const server = app.listen(port, () => {
     RUNTIME_LOGGER.info(`Server running on http://localhost:${port}`);
   });
-  let loggedOut = false;
   process.on('SIGTERM', () => {
     RUNTIME_LOGGER.info('SIGTERM signal received.');
 
-    if (!loggedOut) {
-      loggedOut = true;
-      void closeConnection();
-    }
     server.close();
   });
 
   process.on('SIGINT', () => {
     RUNTIME_LOGGER.info('SIGINT signal received.');
-    if (!loggedOut) {
-      loggedOut = true;
-      void closeConnection();
-    }
+
     server.close();
   });
 
