@@ -23,7 +23,6 @@ export const listAllTransactions = async ({ limit = 20, cursor = 1 }: { limit?: 
       },
     },
   );
-  console.warn(cursor, limit, data, error, response);
 
   if (error) {
     RUNTIME_LOGGER.error(error);
