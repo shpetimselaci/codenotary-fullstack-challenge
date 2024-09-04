@@ -38,13 +38,8 @@ export const TransactionsTable = () => {
           ) : (
             <>
               {(transactions || []).map((transaction) => (
-                <tr
-                  className="hover:bg-slate-300"
-                  key={transaction.transaction_id}
-                >
-                  <td className="border-b px-2 py-1">
-                    {transaction.transaction_id}
-                  </td>
+                <tr className="hover:bg-slate-300" key={transaction._id}>
+                  <td className="border-b px-2 py-1">{transaction._id}</td>
                   <td className="border-b px-2 py-1">
                     {transaction.account_number}
                   </td>
@@ -68,7 +63,7 @@ export const TransactionsTable = () => {
         <Button
           size="sm"
           disabled={isLoading || !hasNextPage}
-          onClick={() => fetchNextPage()}
+          onClick={() => fetchNextPage({ pageParam: next })}
         >
           Load more
         </Button>

@@ -8,7 +8,7 @@ export const useTransactions = () => {
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
-      initialCursor: 0,
+      initialCursor: 1,
     }
   );
 
