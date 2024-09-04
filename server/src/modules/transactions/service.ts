@@ -27,9 +27,6 @@ export const listAllTransactions = async ({ limit = 20, cursor = 1 }: { limit?: 
   if (error) {
     RUNTIME_LOGGER.error(error);
 
-    RUNTIME_LOGGER.error(error.error);
-    RUNTIME_LOGGER.error(response);
-
     throw new TRPCError({
       code: TRPC_ERROR_CODES_BY_NUMBER[TRPC_ERROR_CODES_BY_KEY.INTERNAL_SERVER_ERROR],
       message: error.error,
