@@ -8,21 +8,18 @@ import { Transaction, TRANSACTIONS_COLLECTION_NAME } from './schema';
 import { AddTransactionSchema } from './validation';
 
 export const listAllTransactions = async ({ limit = 20, cursor = 1 }: { limit?: number; cursor?: number }) => {
-  const { error, data, response } = await immudbVaultClient.POST(
-    '/ledger/{ledger}/collection/{collection}/documents/search',
-    {
-      params: {
-        path: {
-          ledger: config.IMMUDB_LEDGER,
-          collection: TRANSACTIONS_COLLECTION_NAME,
-        },
-      },
-      body: {
-        page: cursor,
-        perPage: limit,
+  const { error, data } = await immudbVaultClient.POST('/ledger/{ledger}/collection/{collection}/documents/search', {
+    params: {
+      path: {
+        ledger: config.IMMUDB_LEDGER,
+        collection: TRANSACTIONS_COLLECTION_NAME,
       },
     },
-  );
+    body: {
+      page: cursor,
+      perPage: limit,
+    },
+  });
 
   if (error) {
     RUNTIME_LOGGER.error(error);
