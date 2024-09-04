@@ -5,24 +5,59 @@ export const up: MigrationFn = async (params) => {
     context: { queryBuilder },
   } = params;
 
-  const query = queryBuilder.raw(
-    `create table if not exists transactions (
-      transaction_id UUID,
-      account_number varchar,
-      account_name varchar,
-      type varchar[9],
-      iban varchar,
-      address varchar[255],
-      created_at varchar[255],
-      amount integer,
-      primary key transaction_id
-    );`,
-  );
-
-  return query;
+  const response = await queryBuilder.PUT('/ledger/{ledger}/collection/{collection}', {
+    params: {
+      path: {
+        ledger: 'default',
+        collection: 'transactions',
+      },
+    },
+    body: {
+      fields: [
+        {
+          name: 'transaction_id',
+          type: 'STRING',
+        },
+        {
+          name: 'account_number',
+          type: 'STRING',
+        },
+        {
+          name: 'account_name',
+          type: 'STRING',
+        },
+        {
+          name: 'type',
+          type: 'STRING',
+        },
+        {
+          name: 'iban',
+          type: 'STRING',
+        },
+        {
+          name: 'created_at',
+          type: 'STRING',
+        },
+        {
+          name: 'amount',
+          type: 'DOUBLE',
+        },
+      ],
+    },
+  });
+  if (response.error) {
+    throw new Error(response.error.error);
+  }
+  return response;
 };
 
 export const down: MigrationFn = async ({ context: { queryBuilder } }) => {
-  const query = queryBuilder.schema.dropTable('transactions');
-  return query;
+  return queryBuilder.DELETE('/ledger/{ledger}/collection/{collection}', {
+    params: {
+      path: {
+        ledger: 'default',
+        collection: 'transactions',
+      },
+    },
+  });
 };
