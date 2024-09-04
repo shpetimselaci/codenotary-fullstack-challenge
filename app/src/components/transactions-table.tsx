@@ -63,7 +63,7 @@ export const TransactionsTable = () => {
         <Button
           size="sm"
           disabled={isLoading || !hasNextPage}
-          onClick={() => fetchNextPage({ pageParam: next })}
+          onClick={() => fetchNextPage()}
         >
           Load more
         </Button>
