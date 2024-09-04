@@ -1,0 +1,2259 @@
+openapi: 3.0.3
+info:
+  title: immudb Vault
+  description: Specification of API to interact with immudb Vault.
+  contact:
+    email: contact@codenotary.com
+  version: 1.0.0
+tags:
+  - name: documents
+    description: Documents API - endpoint related to documents
+  - name: collections
+    description: Collections API - endpoint related to collections
+  - name: status
+    description: Status API - endpoints related to status of vault
+  - name: vault
+    description: Vault API - general public endpoints related to vault
+paths:
+  /setup-temp-vault:
+    post:
+      tags:
+        - vault
+      description: Create a temp expirable vault.
+      operationId: setupTempVault
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetupTempVaultReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/collection/{collection}/document:
+    put:
+      tags:
+        - documents
+      summary: Create new document inside collection
+      description: >-
+        Create new document inside collection. Source is either JSON from
+        Request Body or a valid json file like myfile.json
+      operationId: documentCreate
+      security:
+        - ApiKeyAuth:
+            - read
+            - write
+        - PassetoAuth:
+            - read
+            - write
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentInsertRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DocumentInsertFromFileRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentInsertResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '413':
+          description: Document too big
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+    post:
+      tags:
+        - documents
+      summary: Replace whole document with new provided
+      description: >-
+        Replace whole document with new provided. Source is either JSON from
+        Request Body or a valid json file like myfile.json
+      operationId: updateDocument
+      security:
+        - ApiKeyAuth:
+            - read
+            - write
+        - PassetoAuth:
+            - read
+            - write
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DocumentUpdateFromFileRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentUpdateResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '413':
+          description: Document too big
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /documents/{ref}:
+    get:
+      tags:
+        - documents
+      summary: Fetch a document through its public reference id.
+      description: Fetch a document through its public reference id.
+      operationId: getPublicDocument
+      parameters:
+        - in: path
+          name: ref
+          schema:
+            type: string
+          required: true
+          description: Public reference id of the supplied document
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentAtRevision'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/collection/{collection}/documents:
+    put:
+      tags:
+        - documents
+      summary: Create multiple documents inside collection
+      description: >-
+        Create multiple documents inside collection. Source is either from
+        Request Body or a valid file like myfile.json
+      operationId: documentCreateMany
+      security:
+        - ApiKeyAuth:
+            - read
+            - write
+        - PassetoAuth:
+            - read
+            - write
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentInsertManyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DocumentInsertManyFromFileRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentInsertManyResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '413':
+          description: Document too big
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/collection/{collection}/documents/{document}/access-url:
+    get:
+      tags:
+        - documents
+      summary: Get a public access url for a given document.
+      description: >-
+        Get a public access url for a given document. The document can be
+        accessed publicly with the given url.
+      operationId: accessDocumentUrl
+      security:
+        - ApiKeyAuth:
+            - read
+        - PassetoAuth:
+            - read
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+        - in: path
+          name: document
+          schema:
+            type: string
+          required: true
+          description: Document id
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentAccessUrlResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/collection/{collection}/documents/search:
+    post:
+      tags:
+        - documents
+      summary: Search for a document inside collection
+      description: >-
+        Search a document inside collection. Can be a search without query or
+        with a query. If done without query, will return all documents in the
+        collection.
+      operationId: searchDocument
+      security:
+        - ApiKeyAuth:
+            - read
+        - PassetoAuth:
+            - read
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentSearchRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentSearchResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/collection/{collection}/documents/count:
+    post:
+      tags:
+        - documents
+      summary: Count documents inside collection
+      description: Return a count of documents inside collection
+      operationId: countDocuments
+      security:
+        - ApiKeyAuth:
+            - read
+        - PassetoAuth:
+            - read
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentCountRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentsCountResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/collection/{collection}/document/{document-id}/audit:
+    post:
+      tags:
+        - documents
+      summary: Return versions of a document
+      description: Return versions of a document
+      operationId: auditDocument
+      security:
+        - ApiKeyAuth:
+            - read
+        - PassetoAuth:
+            - read
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+        - in: path
+          name: document-id
+          schema:
+            type: string
+          required: true
+          description: Explicit document ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentAuditRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentAuditResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+    put:
+      tags:
+        - documents
+      summary: Return diff for document revisions
+      description: Return diff for document revisions for provided document id
+      operationId: diffDocument
+      security:
+        - ApiKeyAuth:
+            - read
+        - PassetoAuth:
+            - read
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+        - in: path
+          name: document-id
+          schema:
+            type: string
+          required: true
+          description: Explicit document ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentDiffRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDiffResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/collection/{collection}/document/{document-id}/proof:
+    post:
+      tags:
+        - documents
+      summary: Return a proof for a document
+      description: Return a proof for a document with specified document-id
+      operationId: getDocumentProof
+      security:
+        - ApiKeyAuth:
+            - read
+        - PassetoAuth:
+            - read
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+        - in: path
+          name: document-id
+          schema:
+            type: string
+          required: true
+          description: Explicit document ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentProofRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentProofResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/collection/{collection}:
+    put:
+      tags:
+        - collections
+      summary: Create collection in the ledger
+      description: Create collection in the ledger
+      operationId: collectionCreate
+      security:
+        - ApiKeyAuth:
+            - read
+            - write
+        - PassetoAuth:
+            - read
+            - write
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectionCreateRequest'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+    post:
+      tags:
+        - collections
+      summary: Update collection within the ledger
+      description: Update the primary key label for the  collection within the ledger
+      operationId: collectionUpdate
+      security:
+        - ApiKeyAuth:
+            - read
+            - write
+        - PassetoAuth:
+            - read
+            - write
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectionUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Collection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+    get:
+      tags:
+        - collections
+      summary: Return information about collection
+      description: Return information about a single collection
+      operationId: collectionGet
+      security:
+        - ApiKeyAuth:
+            - read
+        - PassetoAuth:
+            - read
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          description: Collection name
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collection'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Collection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+    delete:
+      tags:
+        - collections
+      summary: Delete collection
+      description: Delete collection inside ledger
+      operationId: collectionDelete
+      security:
+        - ApiKeyAuth:
+            - read
+            - write
+        - PassetoAuth:
+            - read
+            - write
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          description: Collection name
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Collection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/state:
+    get:
+      tags:
+        - status
+      summary: Return current state of immudb ledger
+      description: Return current state of immudb ledger
+      operationId: getCurrentState
+      security:
+        - ApiKeyAuth:
+            - read
+        - PassetoAuth:
+            - read
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/schemaImmutableState'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/collections:
+    get:
+      tags:
+        - collections
+      summary: List collection within a ledger
+      description: List all collections within a ledger
+      operationId: collectionsList
+      security:
+        - ApiKeyAuth:
+            - read
+        - PassetoAuth:
+            - read
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionListResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/collection/{collection}/indexes:
+    post:
+      tags:
+        - indexes
+      summary: Create a new index in the collection
+      description: >-
+        Create a new index in the collection from the previously un-indexed
+        fields that are part of collection schema
+      operationId: createIndex
+      security:
+        - ApiKeyAuth:
+            - read
+            - write
+        - PassetoAuth:
+            - read
+            - write
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndexCreateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexCreateResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+    put:
+      tags:
+        - indexes
+      summary: Delete index in the collection
+      description: >-
+        Delete index in the collection and marks that collection field as
+        un-indexed
+      operationId: deleteIndex
+      security:
+        - ApiKeyAuth:
+            - read
+            - write
+        - PassetoAuth:
+            - read
+            - write
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+        - in: path
+          name: collection
+          schema:
+            type: string
+          required: true
+          description: Explicit collection name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndexDeleteRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexDeleteResponse'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Index not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+  /ledger/{ledger}/export/s3:
+    post:
+      tags:
+        - export
+      summary: Start export request
+      description: Start export request
+      operationId: s3Export
+      requestBody:
+        description: S3 request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportS3'
+        required: true
+      security:
+        - ApiKeyAuth:
+            - read
+            - write
+        - PassetoAuth:
+            - read
+            - write
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportID'
+        '400':
+          description: Request validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '409':
+          description: Export request already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+  /ledger/{ledger}/export/status:
+    get:
+      tags:
+        - export
+      security:
+        - ApiKeyAuth:
+            - read
+        - PassetoAuth:
+            - read
+      summary: Return information about export
+      description: Return information about export
+      operationId: getExportInformation
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportInformation'
+        '400':
+          description: Invalid ID supplied
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Export request not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          description: ID of export
+          required: true
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+  /ledger/{ledger}/size:
+    get:
+      tags:
+        - status
+      security:
+        - ApiKeyAuth:
+            - read
+        - PassetoAuth:
+            - read
+      summary: Return ledger DB size
+      description: Return ledger DB size
+      operationId: getLedgerDbSize
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LedgerDBSize'
+        '400':
+          description: Invalid Ledger Name supplied
+        '402':
+          description: Payment required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+        '404':
+          description: Export request not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrReply'
+      parameters:
+        - in: path
+          name: ledger
+          schema:
+            type: string
+          required: true
+          description: Explicit ledger name
+components:
+  schemas:
+    ExportID:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    ExportInformation:
+      type: object
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+        date:
+          type: string
+          format: date-time
+      required:
+        - id
+        - message
+        - date
+    ExportS3:
+      type: object
+      properties:
+        region:
+          type: string
+        accessKey:
+          type: string
+        secretKey:
+          type: string
+        token:
+          type: string
+        bucket:
+          type: string
+        uploadKey:
+          type: string
+      required:
+        - region
+        - accessKey
+        - secretKey
+        - token
+        - bucket
+        - uploadKey
+    Collection:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Collection1
+          pattern: ^[a-zA-Z0-9_-]*$
+        idFieldName:
+          type: string
+          example: string
+          pattern: ^[a-zA-Z0-9_-]*$
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field'
+        indexes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Index'
+      required:
+        - name
+        - idFieldName
+        - fields
+        - indexes
+    Document:
+      type: object
+      example:
+        field1: string value
+        field2: 1.3
+        field3: 1
+        field4: true
+        field5: null
+    PaginationRequest:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        perPage:
+          type: integer
+          minimum: 1
+          maximum: 100
+      required:
+        - page
+        - perPage
+    PaginationResponse:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        perPage:
+          type: integer
+          minimum: 1
+      required:
+        - page
+        - perPage
+    StatusCode:
+      type: string
+      enum:
+        - SUCCESS
+        - UPDATED
+        - INSERTED
+        - ALREADY_EXISTS
+        - ERROR
+        - MISSING_INDEX_KEYS
+        - NOT_FOUND
+    ActionResult:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/StatusCode'
+        message:
+          type: string
+        code:
+          description: HTTP status code
+          type: integer
+      required:
+        - status
+        - message
+    ErrReply:
+      properties:
+        code:
+          description: HTTP status code
+          type: integer
+        status:
+          description: HTTP status description
+          type: string
+        error:
+          description: Application error message, for debugging
+          type: string
+      type: object
+      required:
+        - code
+        - error
+        - status
+    Field:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/FieldType'
+      required:
+        - name
+    FieldType:
+      type: string
+      enum:
+        - STRING
+        - BOOLEAN
+        - INTEGER
+        - DOUBLE
+      default: STRING
+    Index:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            type: string
+        isUnique:
+          type: boolean
+      required:
+        - fields
+        - isUnique
+    IndexCreateRequest:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            type: string
+        isUnique:
+          type: boolean
+      required:
+        - fields
+        - isUnique
+    IndexCreateResponse:
+      type: object
+    IndexDeleteRequest:
+      type: object
+      properties:
+        collection:
+          type: string
+        fields:
+          type: array
+          items:
+            type: string
+      required:
+        - collection
+        - fields
+    IndexDeleteResponse:
+      type: object
+    DocumentInsertRequest:
+      example:
+        field1: my_object_field1
+        field2: 3
+        field3: 2
+        field4: false
+    DocumentInsertManyRequest:
+      type: object
+      properties:
+        documents:
+          type: array
+          items:
+            type: object
+          example:
+            - field1: some val
+              field2: 123
+            - field1: some other val
+              field2: 12345
+              field3: true
+      required:
+        - documents
+    DocumentInsertFromFileRequest:
+      type: object
+      properties:
+        document:
+          oneOf:
+            - type: string
+            - type: object
+          format: binary
+      required:
+        - document
+    DocumentUpdateFromFileRequest:
+      type: object
+      properties:
+        document:
+          oneOf:
+            - type: string
+            - type: object
+          format: binary
+        query:
+          $ref: '#/components/schemas/Query'
+    DocumentInsertManyFromFileRequest:
+      type: object
+      properties:
+        document:
+          oneOf:
+            - type: string
+            - type: object
+          format: binary
+      required:
+        - document
+    DocumentUpdateRequest:
+      type: object
+      properties:
+        document:
+          type: object
+        query:
+          $ref: '#/components/schemas/Query'
+      required:
+        - document
+        - query
+    Operator:
+      type: string
+      enum:
+        - EQ
+        - NE
+        - LT
+        - LE
+        - GT
+        - GE
+        - LIKE
+      default: EQ
+    Query:
+      type: object
+      properties:
+        expressions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QueryExpression'
+        orderBy:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderBy'
+        limit:
+          type: integer
+    OrderBy:
+      type: object
+      properties:
+        field:
+          type: string
+        desc:
+          type: boolean
+      required:
+        - field
+        - desc
+    QueryExpression:
+      type: object
+      properties:
+        fieldComparisons:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldComparison'
+    FieldComparison:
+      type: object
+      properties:
+        field:
+          type: string
+        operator:
+          $ref: '#/components/schemas/Operator'
+        value: {}
+      required:
+        - field
+        - operator
+        - value
+    QueryObject:
+      type: object
+      properties:
+        field:
+          type: string
+        operator:
+          $ref: '#/components/schemas/Operator'
+        value:
+          anyOf:
+            - type: string
+            - type: integer
+            - type: number
+      required:
+        - field
+        - operator
+        - value
+    DocumentAccessUrlResponse:
+      type: string
+    DocumentSearchRequest:
+      allOf:
+        - type: object
+          properties:
+            searchId:
+              type: string
+            keepOpen:
+              type: boolean
+            query:
+              $ref: '#/components/schemas/Query'
+        - $ref: '#/components/schemas/PaginationRequest'
+    DocumentSearchResponse:
+      allOf:
+        - type: object
+          properties:
+            searchId:
+              type: string
+            revisions:
+              type: array
+              items:
+                $ref: '#/components/schemas/DocumentAtRevision'
+          required:
+            - items
+            - searchId
+            - revisions
+        - $ref: '#/components/schemas/PaginationResponse'
+    DocumentUpdateResponse:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uint64
+        documentId:
+          type: string
+        revision:
+          type: string
+          format: uint64
+      required:
+        - transactionId
+        - revision
+        - documentId
+    DocumentInsertResponse:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uint64
+        documentId:
+          type: string
+      required:
+        - documentId
+    DocumentInsertManyResponse:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uint64
+        documentIds:
+          type: array
+          items:
+            type: string
+      required:
+        - documentIds
+    DocumentAtRevision:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uint64
+        revision:
+          type: string
+          format: uint64
+        document:
+          $ref: '#/components/schemas/Document'
+      required:
+        - document
+        - transactionId
+        - revision
+    DocumentDiff:
+      type: object
+      properties:
+        diffIds:
+          type: string
+        diff:
+          type: object
+      required:
+        - diffIds
+        - diff
+    DocumentAuditRequest:
+      allOf:
+        - type: object
+          properties:
+            desc:
+              type: boolean
+          required:
+            - desc
+        - $ref: '#/components/schemas/PaginationRequest'
+    DocumentDiffRequest:
+      allOf:
+        - type: object
+          properties:
+            desc:
+              type: boolean
+        - $ref: '#/components/schemas/PaginationRequest'
+    DocumentProofRequest:
+      type: object
+      properties:
+        transactionId:
+          type: integer
+        proofSinceTransactionId:
+          type: integer
+      required:
+        - transactionId
+    DocumentAuditResponse:
+      type: object
+      properties:
+        revisions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentAtRevision'
+      required:
+        - revisions
+    DocumentDiffResponse:
+      type: object
+      properties:
+        revisions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentAtRevision'
+        diffs:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentDiff'
+      required:
+        - revisions
+        - diffs
+    DocumentProofResponse:
+      type: object
+      properties:
+        database:
+          type: string
+        collectionId:
+          type: integer
+          format: int64
+        idFieldName:
+          type: string
+        encodedDocument:
+          type: string
+          format: byte
+        verifiableTx:
+          $ref: '#/components/schemas/schemaVerifiableTxV2'
+      required:
+        - database
+        - collectionId
+        - idFieldName
+        - encodedDocument
+        - verifiableTx
+    schemaVerifiableTxV2:
+      type: object
+      properties:
+        tx:
+          $ref: '#/components/schemas/schemaTx'
+        dualProof:
+          $ref: '#/components/schemas/schemaDualProofV2'
+        signature:
+          $ref: '#/components/schemas/schemaSignature'
+    schemaDualProofV2:
+      description: DualProofV2 contains inclusion and consistency proofs
+      type: object
+      properties:
+        sourceTxHeader:
+          $ref: '#/components/schemas/schemaTxHeader'
+        targetTxHeader:
+          $ref: '#/components/schemas/schemaTxHeader'
+        inclusionProof:
+          description: >-
+            Inclusion proof of the source transaction hash in the main Merkle
+            Tree
+          type: array
+          items:
+            pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+            type: string
+            format: byte
+        consistencyProof:
+          description: >-
+            Consistency proof between Merkle Trees in the source and target
+            transactions
+          type: array
+          items:
+            pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+            type: string
+            format: byte
+    schemaTxHeader:
+      description: Transaction header
+      type: object
+      properties:
+        id:
+          description: Transaction ID
+          type: string
+          format: uint64
+        prevAlh:
+          description: State value (Accumulative Hash - Alh) of the previous transaction
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        ts:
+          description: Unix timestamp of the transaction (in seconds)
+          type: string
+          format: int64
+        nentries:
+          description: Number of entries in a transaction
+          type: integer
+          format: int32
+        eH:
+          description: Entries Hash - cumulative hash of all entries in the transaction
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        blTxId:
+          description: |-
+            Binary linking tree transaction ID
+            (ID of last transaction already in the main Merkle Tree)
+          type: string
+          format: uint64
+        blRoot:
+          description: Binary linking tree root (Root hash of the Merkle Tree)
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        version:
+          description: Header version
+          type: integer
+          format: int32
+        metadata:
+          $ref: '#/components/schemas/schemaTxMetadata'
+    schemaTxMetadata:
+      description: TxMetadata contains metadata set to whole transaction
+      type: object
+      properties:
+        truncatedTxID:
+          description: Entry expiration information
+          type: string
+          format: uint64
+    schemaTx:
+      description: Transaction to verify
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/schemaTxHeader'
+        entries:
+          description: Raw entry values
+          type: array
+          items:
+            $ref: '#/components/schemas/schemaTxEntry'
+        kvEntries:
+          description: KV entries in the transaction (parsed)
+          type: array
+          items:
+            $ref: '#/components/schemas/schemaEntry'
+        zEntries:
+          description: Sorted Set entries in the transaction (parsed)
+          type: array
+          items:
+            $ref: '#/components/schemas/schemaZEntry'
+    schemaTxEntry:
+      type: object
+      properties:
+        key:
+          description: Raw key value (contains 1-byte prefix for kind of the key)
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        hValue:
+          description: Value hash
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        vLen:
+          description: Value length
+          type: integer
+          format: int32
+        metadata:
+          $ref: '#/components/schemas/schemaKVMetadata'
+        value:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          description: |-
+            Value, must be ignored when len(value) == 0 and vLen > 0,
+            otherwise sha256(value) must be equal to hValue
+          format: byte
+    schemaZEntry:
+      type: object
+      properties:
+        set:
+          description: Name of the sorted set
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        key:
+          description: Referenced key
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        entry:
+          $ref: '#/components/schemas/schemaEntry'
+        score:
+          description: Sorted set element's score
+          type: number
+          format: double
+        atTx:
+          description: >-
+            At which transaction the key is bound
+
+            0 if reference is not bound and should read the most recent
+            reference
+          type: string
+          format: uint64
+    schemaEntry:
+      type: object
+      properties:
+        tx:
+          description: >-
+            Transaction id at which the target value was set (i.e. not the
+            reference transaction id)
+          type: string
+          format: uint64
+        key:
+          description: Key of the target value (i.e. not the reference entry)
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        value:
+          description: Value
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        referencedBy:
+          $ref: '#/components/schemas/schemaReference'
+        metadata:
+          $ref: '#/components/schemas/schemaKVMetadata'
+        expired:
+          description: >-
+            If set to true, this entry has expired and the value is not
+            retrieved
+          type: boolean
+        revision:
+          description: Key's revision, in case of GetAt it will be 0
+          type: string
+          format: uint64
+    schemaReference:
+      type: object
+      properties:
+        tx:
+          description: Transaction if when the reference key was set
+          type: string
+          format: uint64
+        key:
+          description: Reference key
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        atTx:
+          description: >-
+            At which transaction the key is bound, 0 if reference is not bound
+            and should read the most recent reference
+          type: string
+          format: uint64
+        metadata:
+          $ref: '#/components/schemas/schemaKVMetadata'
+        revision:
+          description: Revision of the reference entry
+          type: string
+          format: uint64
+    schemaKVMetadata:
+      type: object
+      properties:
+        deleted:
+          description: True if this entry denotes a logical deletion
+          type: boolean
+        expiration:
+          $ref: '#/components/schemas/schemaExpiration'
+        nonIndexable:
+          description: >-
+            If set to true, this entry will not be indexed and will only be
+            accessed through GetAt calls
+          type: boolean
+    schemaExpiration:
+      type: object
+      properties:
+        expiresAt:
+          description: Entry expiration time (unix timestamp in seconds)
+          type: string
+          format: int64
+    CollectionUpdateRequest:
+      type: object
+      properties:
+        idFieldName:
+          type: string
+      required:
+        - idFieldName
+    CollectionCreateRequest:
+      type: object
+      properties:
+        idFieldName:
+          type: string
+          example: string
+          pattern: ^[a-zA-Z0-9_-]*$
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field'
+        indexes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Index'
+    CollectionListResponse:
+      type: object
+      properties:
+        collections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Collection'
+      required:
+        - collections
+    schemaImmutableState:
+      type: object
+      properties:
+        db:
+          description: The db name
+          type: string
+        txId:
+          description: Id of the most recent transaction
+          type: string
+          format: uint64
+        txHash:
+          description: State of the most recent transaction
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        signature:
+          $ref: '#/components/schemas/schemaSignature'
+        precommittedTxId:
+          description: Id of the most recent precommitted transaction
+          type: string
+          format: uint64
+        precommittedTxHash:
+          description: State of the most recent precommitted transaction
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+    schemaSignature:
+      description: Signature for the new state value
+      type: object
+      properties:
+        publicKey:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+        signature:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+    LedgerDBSize:
+      type: object
+      properties:
+        name:
+          type: string
+        size:
+          type: number
+          format: double
+      required:
+        - name
+        - size
+    DocumentCountRequest:
+      allOf:
+        - type: object
+          properties:
+            query:
+              $ref: '#/components/schemas/Query'
+    DocumentsCountResponse:
+      type: object
+      properties:
+        collection:
+          type: string
+        count:
+          type: integer
+      required:
+        - collection
+        - count
+    SetupTempVaultReply:
+      type: object
+      properties:
+        expiration:
+          type: string
+        token:
+          type: string
+      required:
+        - expiration
+        - token
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    PassetoAuth:
+      type: http
+      scheme: bearer
+  links: {}
+  callbacks: {}
+servers:
+  - url: https://vault.immudb.io/ics/api/v1

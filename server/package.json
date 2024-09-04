@@ -17,6 +17,7 @@
     "seed:down": "pnpm seeder down",
     "migrator": "tsx ./umzug/migrator.ts",
     "seeder": "tsx ./umzug/seeder.ts",
+    "open_api_types": "openapi-typescript ./vault-spec.yaml -o ./src/types/immudb-vault-types.d.ts && pnpm run lint:write",
     "test": "vitest"
   },
   "keywords": [],
@@ -53,6 +54,8 @@
     "knex": "^3.1.0",
     "node-fetch": "^3.3.2",
     "node-postgres": "^0.6.2",
+    "openapi-fetch": "^0.12.0",
+    "openapi-typescript": "^7.4.0",
     "pg": "^8.12.0",
     "pino": "^9.3.2",
     "pino-pretty": "^11.2.2",

@@ -1,15 +1,15 @@
 import { MigrationFn, MigrationParams, Umzug } from 'umzug';
 import { SEEDER_LOGGER } from '~/loggers/migrations';
-import { db } from '~/sdk/knex';
+import { immudbVaultClient } from '~/sdk/immudb-vault';
 
 export const umzug = new Umzug({
   context: () => ({
-    queryBuilder: db,
+    queryBuilder: immudbVaultClient,
   }),
 
   migrations: {
     glob: 'umzug/seeders/*.ts',
-    resolve: ({ name, path, context }: MigrationParams<{ queryBuilder: typeof db }>) => {
+    resolve: ({ name, path, context }: MigrationParams<{ queryBuilder: typeof immudbVaultClient }>) => {
       // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-non-null-assertion
       const migration = require(path!) as { up: MigrationFn; down: MigrationFn };
       return {

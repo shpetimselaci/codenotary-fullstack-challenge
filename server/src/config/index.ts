@@ -9,6 +9,7 @@ export const environmentVariablesSchema = z.object({
   NODE_ENV: z.string(),
   PORT: z.coerce.number(),
   MODE: z.string().optional(),
+  IMMUDB_VAULT_TOKEN: z.string(),
 });
 
 export type EnvSchema = z.infer<typeof environmentVariablesSchema>;

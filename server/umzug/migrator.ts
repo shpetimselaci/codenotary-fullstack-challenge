@@ -1,16 +1,16 @@
 import { MigrationFn as MigrationFunction, MigrationParams, Umzug } from 'umzug';
 import { MIGRATIONS_LOGGER } from '~/loggers/migrations';
-import { db } from '~/sdk/knex';
+import { immudbVaultClient } from '~/sdk/immudb-vault';
 
-export type MigrationFn = MigrationFunction<{ queryBuilder: typeof db }>;
+export type MigrationFn = MigrationFunction<{ queryBuilder: typeof immudbVaultClient }>;
 const migrationsUmzug = new Umzug({
   context: () => ({
-    queryBuilder: db,
+    queryBuilder: immudbVaultClient,
   }),
 
   migrations: {
     glob: 'umzug/migrations/*.ts',
-    resolve: ({ name, path, context }: MigrationParams<{ queryBuilder: typeof db }>) => {
+    resolve: ({ name, path, context }: MigrationParams<{ queryBuilder: typeof immudbVaultClient }>) => {
       // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-non-null-assertion
       const migration = require(path!) as { up: MigrationFn; down: MigrationFn };
       return {
