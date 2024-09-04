@@ -33,6 +33,12 @@ Clone this repository, and on the root folder run `docker compose up`
 
 You'll find documentation in url `http://localhost:7070/docs` with all the router endpoints documented and readily to be tested
 
+## Environment variables
+
+You have an example of .env file at [.env.example](./.env.example) in this dir.
+
+You can copy that fully, though for one field it is neccesary you copy the token you can get at [immudb vault](https://vault.immudb.io/).
+
 ## Running tests
 
 After running `docker compose up`, run `docker ps` and find the id of the container that is running the Node.js, and ssh to it using:
@@ -82,6 +88,7 @@ More testing could be done on the hooks, shell components and components, etc.
 Umzug does have a SequelizeStorage that creates a table for migrations, where you can keep track of things that got migrated or seeded.
 That should've been written down to be handled, but life is short.
 
-# ISSUES with immudb!
+~~# ISSUES with immudb!
 
 SQL queries wouldn't work with passed parameters using a pg connection. It was such a hassle to understand what is going on. Plus had to write my own type mapper to unwrap rows, which had a bad taste.
+~~
