@@ -41,7 +41,7 @@ You can copy that fully, though for one field it is neccesary you copy the token
 
 ## Migrations
 
-After you run docker compose up, that is automatically handled for you. Please go to [immudb vault](https://vault.immudb.io/), reset your vault, and come back to delete `umzug.json` so next time when you docker compose up, it runs as it did for the first time.
+After you run docker compose up, that is automatically handled for you. Please go to [immudb vault](https://vault.immudb.io/), reset your vault, and come back to delete `server/umzug.json` so next time when you docker compose up, it runs as it did for the first time.
 
 ## Running tests
 
