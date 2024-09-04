@@ -1,5 +1,5 @@
 export type Transaction = {
-  transaction_id: string;
+  _id: string;
   account_number: string;
   account_name: string;
   type: 'receiving' | 'sending';

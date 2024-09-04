@@ -1,7 +1,6 @@
 import { TRPC_ERROR_CODES_BY_NUMBER } from '@trpc/server/rpc';
 import { isValid } from 'date-fns';
 import { expectTypeOf } from 'vitest';
-import { string } from 'zod';
 import { t } from '~/setup.test';
 
 import { Transaction } from './schema';
@@ -39,7 +38,6 @@ describe('Service should allow listing of transactions within the account and sh
 
       expect(response).contains(insert);
       expect(isValid(response.created_at));
-      expect(string().uuid().safeParse(response.transaction_id).success).toBe(true);
     });
 
     test('List all transactions of the account', async ({ expect }) => {

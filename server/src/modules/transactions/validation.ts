@@ -25,7 +25,7 @@ export const addTransactionSchema = z.object({
 
 export const addedTransactionSchema = z.object({
   ...addTransactionSchema.shape,
-  transaction_id: z.string().uuid(),
+  _id: z.string(),
   created_at: z.string().datetime(),
 });
 

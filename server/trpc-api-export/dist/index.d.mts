@@ -72,7 +72,7 @@ declare const appRouter: _trpc_server.CreateRouterInner<
                 address: string;
                 amount: number;
                 type: 'receiving' | 'sending';
-                transaction_id: string;
+                _id: string;
                 created_at: string;
               }[];
               nextCursor?: number | undefined;
@@ -85,7 +85,7 @@ declare const appRouter: _trpc_server.CreateRouterInner<
                 address: string;
                 amount: number;
                 type: 'receiving' | 'sending';
-                transaction_id: string;
+                _id: string;
                 created_at: string;
               }[];
               nextCursor?: number | undefined;
@@ -145,7 +145,7 @@ declare const appRouter: _trpc_server.CreateRouterInner<
               address: string;
               amount: number;
               type: 'receiving' | 'sending';
-              transaction_id: string;
+              _id: string;
               created_at: string;
             };
             _output_out: {
@@ -155,7 +155,7 @@ declare const appRouter: _trpc_server.CreateRouterInner<
               address: string;
               amount: number;
               type: 'receiving' | 'sending';
-              transaction_id: string;
+              _id: string;
               created_at: string;
             };
           },
@@ -168,7 +168,7 @@ declare const appRouter: _trpc_server.CreateRouterInner<
 type AppRouter = typeof appRouter;
 
 type Transaction = {
-  transaction_id: string;
+  _id: string;
   account_number: string;
   account_name: string;
   type: 'receiving' | 'sending';

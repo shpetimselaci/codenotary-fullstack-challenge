@@ -9,6 +9,7 @@ const authMiddleware: Middleware = {
     return request;
   },
 };
+
 const immudbVaultClient = createClient<paths>({
   baseUrl: config.IMMUDB_VAULT_URL,
 });

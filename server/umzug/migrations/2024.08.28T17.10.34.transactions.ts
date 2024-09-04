@@ -19,10 +19,6 @@ export const up: MigrationFn = async (params) => {
     body: {
       fields: [
         {
-          name: 'transaction_id',
-          type: 'STRING',
-        },
-        {
           name: 'account_number',
           type: 'STRING',
         },
