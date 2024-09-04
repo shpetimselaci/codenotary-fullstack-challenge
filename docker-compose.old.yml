@@ -1,12 +1,29 @@
 services:
+  db:
+    container_name: immudb
+    image: codenotary/immudb:latest
+    networks:
+      - vpn
+    ports:
+      - 3322:3322
+      - 9497:9497
+      - 5432:5432
+      - 8080:8080
+    env_file:
+      - .env
+
   backend:
     container_name: trpc
     build:
       context: ./server
       dockerfile: Dockerfile
+    networks:
+      - vpn
     ports:
       - 7070:7070
       - 4000:4000
+    depends_on:
+      - db
     volumes:
       - ./server/:/home/server/
       - be_node_modules:/home/server/node_modules
@@ -24,6 +41,11 @@ services:
       - 3000:3000
     depends_on:
       - backend
+
+networks:
+  vpn:
+    name: vpn
+    driver: bridge
 
 volumes:
   client_node_modules:
