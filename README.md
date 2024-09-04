@@ -39,6 +39,10 @@ You have an example of .env file at [.env.example](./.env.example) in this dir.
 
 You can copy that fully, though for one field it is neccesary you copy the token you can get at [immudb vault](https://vault.immudb.io/).
 
+## Migrations
+
+After you run docker compose up, that is automatically handled for you. Please go to [immudb vault](https://vault.immudb.io/), reset your vault, and come back to delete `umzug.json` so next time when you docker compose up, it runs as it did for the first time.
+
 ## Running tests
 
 After running `docker compose up`, run `docker ps` and find the id of the container that is running the Node.js, and ssh to it using:
