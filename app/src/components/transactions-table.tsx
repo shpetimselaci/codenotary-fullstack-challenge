@@ -67,9 +67,9 @@ export const TransactionsTable = () => {
         >
           Load more
         </Button>
-        <span className="text-[0.5rem]">
+        {/* <span className="text-[0.5rem]">
           (db wont load based off SQL CURSOR...)
-        </span>
+        </span> */}
       </div>
     </>
   );
